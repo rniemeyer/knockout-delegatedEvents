@@ -1,0 +1,125 @@
+<!DOCTYPE HTML >
+<html>
+<head>
+    <title>knockout-delegatedEvents example</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <style>
+        input { margin: 5px; border: solid #eee 1px; }
+        .item a { visibility: hidden; }
+        .item:hover a { visibility: visible; }
+
+    </style>
+</head>
+<body>
+    <div id="main" data-bind="delegatedHandler: ['click', 'mouseover', 'mouseout']">
+        <ul data-bind="foreach: groups">
+            <li data-mouseover="showMessage" data-mouseout="clearMessage">
+                <input data-bind="value: name" />
+                <ul data-bind="foreach: items">
+                    <li class="item" data-mouseover="showMessage" data-mouseout="clearMessage">
+                        <input data-bind="value: name" />
+                        <input class="input-mini" data-bind="value: price" />
+                        <a href="#" title="insert row" data-click="insertRow"><i class="icon-plus"></i></a>
+                        <a href="#" title="remove row" data-click="removeItem"><i class="icon-trash"></i></a>
+                    </li>
+                </ul>
+                <a href="#" class="btn-mini" data-click="addItem">Add Item</a>
+            </li>
+        </ul>
+        <!-- could have just used data-click="addGroup" here, just showing the binding -->
+        <a href="#" class="btn-mini" data-bind="delegatedClick: addGroup">Add Group</a>
+    </div>
+
+    <hr/>
+
+    <div id="logging">
+        <div class="alert" data-bind="text: message, visible: message"></div>
+    </div>
+
+
+    <script src="../ext/knockout-2.2.0.js"></script>
+    <script src="../src/knockout-delegatedEvents.js"></script>
+    <script>
+        var Item = function(id, name, price, description) {
+            this.id = id;
+            this.name = ko.observable(name);
+            this.price = ko.observable(price);
+            this.description = ko.observable(description);
+        };
+
+        var Group = function(name, description, items) {
+            this.name = ko.observable(name);
+            this.description = ko.observable(description);
+            this.items = ko.observableArray(items || []);
+        };
+
+        ko.utils.extend(Group.prototype, {
+            addItem: function() {
+                this.items.push(new Item(0, "new item", 1, "item description"));
+            },
+            removeItem: function(item) {
+                this.items.remove(item);
+            },
+            insertRow: function(item) {
+                var index = this.items.indexOf(item);
+                this.items.splice(index, 0, new Item());
+            }
+        });
+
+        var ViewModel = function(groups) {
+            this.groups = ko.observableArray(groups);
+
+            this.selectedGroup = ko.observable();
+            this.selectedItem = ko.observable();
+
+            this.message = ko.observable();
+        };
+
+        ko.utils.extend(ViewModel.prototype, {
+            addGroup: function() {
+                this.groups.push(new Group("new group", "group description"));
+            },
+            removeGroup: function(group) {
+                this.groups.remove(group);
+            }
+        });
+
+        //the main view model
+        var vm = new ViewModel([
+            new Group("Special Deals", "Items that are for sale for a limited time", [
+                new Item(1, "item one", 5.50, "one description"),
+                new Item(2, "item two", 2.25, "two description")
+            ]),
+            new Group("Best Sellers", "Our most popular items" , [
+                new Item(3, "item three", 4.75, "three description"),
+                new Item(4, "item four", 5.25, "four description")
+            ])
+        ]);
+
+        //a separate view model related to logging
+        var logger = {
+            message: ko.observable(),
+            show: function(obj) {
+                this.message(obj && ko.utils.unwrapObservable(obj.description));
+            },
+            clear: function() {
+                this.message("");
+            }
+        };
+
+        //make these actions available to any view model
+        ko.actions.showMessage = {
+            action: logger.show,
+            owner: logger
+        };
+
+        ko.actions.clearMessage = {
+            action: logger.clear,
+            owner: logger
+        };
+
+        ko.applyBindings(vm, document.getElementById("main"));
+        ko.applyBindings(logger, document.getElementById("logging"));
+    </script>
+</body>
+</html>
