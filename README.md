@@ -2,7 +2,7 @@ Knockout Delegated Events
 ================
 *knockout-delegatedEvents* is a [Knockout.js](http://knockoutjs.com/) plugin that allows you to add event delegation declaratively in your markup in a way that matches well with a normal Knockout application. This means adding an event handler on a parent element that can respond to events triggered by a child element and connect with a handler that lives on the view model. This is similar to using jQuery's [on](http://api.jquery.com/on/) (previously [live](http://api.jquery.com/live/)/[delegate](http://api.jquery.com/delegate/)).
 
-More background here: http://www.knockmeout.net/2012/05/using-ko-native-pubsub.html
+More background here: http://www.knockmeout.net/2012/11/revisit-event-delegation-in-knockout-js.html
 
 ##Parent Element
 
