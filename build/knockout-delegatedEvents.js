@@ -1,4 +1,4 @@
-//knockout-delegatedEvents v0.1 | (c) 2012 Ryan Niemeyer | http://www.opensource.org/licenses/mit-license
+//knockout-delegatedEvents v0.1.1 | (c) 2012 Ryan Niemeyer | http://www.opensource.org/licenses/mit-license
 (function(factory) {
     //CommonJS
     if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
@@ -15,7 +15,7 @@
     var createDelegatedHandler = function(eventName, root) {
         return function(event) {
             var data, method, action, owner, matchingParent, command, result,
-                el = event.target,
+                el = event.target || event.srcElement,
                 context = ko.contextFor(el),
                 attr = "data-" + eventName,
                 key = prefix + eventName;

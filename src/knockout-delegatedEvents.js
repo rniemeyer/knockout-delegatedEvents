@@ -14,7 +14,7 @@
     var createDelegatedHandler = function(eventName, root) {
         return function(event) {
             var data, method, action, owner, matchingParent, command, result,
-                el = event.target,
+                el = event.target || event.srcElement,
                 context = ko.contextFor(el),
                 attr = "data-" + eventName,
                 key = prefix + eventName;
