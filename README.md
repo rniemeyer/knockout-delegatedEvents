@@ -115,7 +115,7 @@ Note: when attaching a handler using the binding, you will need to manage the va
 * Knockout 2.0+
 
 ##Build
-This project uses anvil.js (see http://github.com/appendTo/anvil.js) for building/minifying.
+This project uses [grunt](http://gruntjs.com/) for building/minifying.
 
 ##Examples
 The `examples` directory contains a sample that demonstrates the three different ways that a handler can be found when a child element triggers an event.

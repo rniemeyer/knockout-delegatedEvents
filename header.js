@@ -1,1 +1,0 @@
-//knockout-delegatedEvents v0.1.1 | (c) 2012 Ryan Niemeyer | http://www.opensource.org/licenses/mit-license
