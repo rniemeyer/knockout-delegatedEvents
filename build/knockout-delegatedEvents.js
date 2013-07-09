@@ -1,4 +1,4 @@
-// knockout-delegatedEvents 0.1.1 | (c) 2013 Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license
+// knockout-delegatedEvents 0.1.2 | (c) 2013 Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license
 ;(function(factory) {
     //CommonJS
     if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
@@ -25,7 +25,7 @@
                 while (!method && el) {
                     method = el.getAttribute(attr) || ko.utils.domData.get(el, key);
                     if (!method) {
-                        el = el !== root ? el.parentElement : null;
+                        el = el !== root ? el.parentNode : null;
                     }
                 }
 

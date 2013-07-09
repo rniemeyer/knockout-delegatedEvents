@@ -24,7 +24,7 @@
                 while (!method && el) {
                     method = el.getAttribute(attr) || ko.utils.domData.get(el, key);
                     if (!method) {
-                        el = el !== root ? el.parentElement : null;
+                        el = el !== root ? el.parentNode : null;
                     }
                 }
 
