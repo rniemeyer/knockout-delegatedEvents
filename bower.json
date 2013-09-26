@@ -1,0 +1,15 @@
+{
+    "name": "knockout-delegatedEvents",
+    "version": "0.1.2",
+    "main": "build/knockout-delegatedEvents.min.js",
+    "ignore": [
+        "examples",
+        "ext",
+        "lib",
+        "spec",
+        "src",
+        "Gruntfile.js",
+        "package.json",
+        ".gitignore"
+    ]
+}
