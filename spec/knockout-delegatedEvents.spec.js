@@ -21,6 +21,18 @@ describe("knockout-delegatedEvents", function(){
                 expect(ko.bindingHandlers.delegatedOne).toBeDefined();
                 delete ko.bindingHandlers.one;
             });
+
+            it("should not error when event name is empty", function() {
+                var div = document.createElement("div");
+                div.setAttribute("data-bind", "delegatedHandler: ['']");
+                ko.applyBindings({}, div);
+            });
+
+            it("should not error when value passed is empty", function() {
+                var div = document.createElement("div");
+                div.setAttribute("data-bind", "delegatedHandler: null");
+                ko.applyBindings({}, div);
+            });
         });
 
         describe("creating child bindings for specified events from an array", function() {
@@ -91,6 +103,14 @@ describe("knockout-delegatedEvents", function(){
                     expect(vm.called).toBeTruthy();
                     expect(vm.item).toEqual(vm);
                 });
+
+                it("should not error when method is not a function", function() {
+                    ko.utils.domData.set(parent, "ko_delegated_click", true);
+
+                    ko.utils.triggerEvent(child, "click");
+
+                    expect(vm.called).toBeUndefined();
+                });
             });
 
             describe("when method is on the item's parent", function() {
@@ -158,6 +178,17 @@ describe("knockout-delegatedEvents", function(){
                     expect(owner.item).toEqual(vm);
                     expect(vm.called).toBeUndefined();
                 });
+
+                it("should not error when action is defined but empty", function() {
+                    var vm = {};
+
+                    ko.actions.myAction = null;
+
+                    ko.applyBindings(vm, root);
+                    ko.utils.triggerEvent(parent, "click");
+
+                    expect(vm.called).toBeUndefined();
+                });
             });
 
             describe("when method is on the data item", function() {
@@ -176,6 +207,68 @@ describe("knockout-delegatedEvents", function(){
 
                     expect(vm.called).toBeTruthy();
                     expect(vm.item).toEqual(vm);
+                });
+
+                it("should prevent default when method does not return true", function() {
+                    var defaultPrevented;
+
+                    vm.myAction = function(data, event) {
+                        vm.called = true;
+                        vm.item = data;
+
+                        event.preventDefault = function() {
+                            defaultPrevented = true;
+                        };
+
+                        return false;
+                    };
+
+                    ko.utils.triggerEvent(parent, "click");
+
+                    expect(vm.called).toBeTruthy();
+                    expect(vm.item).toEqual(vm);
+                    expect(defaultPrevented).toBeTruthy();
+                });
+
+                it("should set returnValue to false, if preventDefault does not exist", function() {
+                    var theEvent;
+
+                    vm.myAction = function(data, event) {
+                        vm.called = true;
+                        vm.item = data;
+
+                        theEvent = event;
+                        event.preventDefault = null;
+
+                        return false;
+                    };
+
+                    ko.utils.triggerEvent(parent, "click");
+
+                    expect(vm.called).toBeTruthy();
+                    expect(vm.item).toEqual(vm);
+                    expect(theEvent.returnValue).toEqual(false);
+                });
+
+                it("should not prevent default when method returns true", function() {
+                    var defaultPrevented;
+
+                    vm.myAction = function(data, event) {
+                        vm.called = true;
+                        vm.item = data;
+
+                        event.preventDefault = function() {
+                            defaultPrevented = true;
+                        };
+
+                        return true;
+                    };
+
+                    ko.utils.triggerEvent(parent, "click");
+
+                    expect(vm.called).toBeTruthy();
+                    expect(vm.item).toEqual(vm);
+                    expect(defaultPrevented).toBeUndefined();
                 });
 
                 it("should find and execute a method when parent has action and a child is clicked", function() {
@@ -209,6 +302,18 @@ describe("knockout-delegatedEvents", function(){
                     var vm = {};
 
                     ko.applyBindings(vm, root);
+                    ko.utils.triggerEvent(parent, "click");
+
+                    expect(vm.called).toBeUndefined();
+                });
+            });
+
+            describe("when there is no method to be found", function() {
+                it("should not throw an error", function() {
+                    var vm = {};
+
+                    ko.applyBindings(vm, root);
+                    parent.setAttribute("data-click", "");
                     ko.utils.triggerEvent(parent, "click");
 
                     expect(vm.called).toBeUndefined();
