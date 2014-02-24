@@ -67,10 +67,10 @@
 
                 //execute the action as KO normally would
                 if (action) {
-                    // if the event is a submit event, we want to just pass
-                    // the form element, and set the context to 'this'.
-                    // This matches the knockout behaviour for submit bindings.
-                    if (eventName === 'submit') {
+                    //if the event is a submit event, we want to just pass
+                    //the form element, and set the context to 'this'.
+                    //This matches the knockout behaviour for submit bindings.
+                    if (eventName === "submit") {
                       result = action.call(data, event.target);
                     } else {
                       result = action.call(owner, data, event);

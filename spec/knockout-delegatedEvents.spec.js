@@ -279,6 +279,28 @@ describe("knockout-delegatedEvents", function(){
                 });
             });
 
+            describe("when event is \"submit\"", function () {
+                it("should call the handler with arguments that match how KO handles submit", function () {
+                    var context,
+                        vm = {
+                            myAction: function(target) {
+                                context = this;
+                                this.target = target;
+                            }
+                        };
+
+                    root.setAttribute("data-bind", "delegatedHandler: ['submit']");
+                    parent.setAttribute("data-submit", "myAction");
+
+                    ko.applyBindings(vm, root);
+
+                    ko.utils.triggerEvent(parent, "submit");
+
+                    expect(context).toEqual(vm);
+                    expect(vm.target).toEqual(parent);
+                });
+            });
+
             describe("when method is on the item's parent", function() {
                 it("should find and execute a method", function() {
                     var vm = {
