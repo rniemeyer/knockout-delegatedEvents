@@ -85,6 +85,12 @@
                             event.returnValue = false;
                         }
                     }
+
+                    //prevent bubbling
+                    event.cancelBubble = true;
+                    if (typeof event.stopPropagation === "function") {
+                        event.stopPropagation();
+                    }
                 }
             }
         };

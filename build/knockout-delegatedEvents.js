@@ -1,4 +1,4 @@
-// knockout-delegatedEvents 0.2.0 | (c) 2014 Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license
+// knockout-delegatedEvents 0.3.0 | (c) 2014 Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license
 ;(function(factory) {
     //CommonJS
     if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
@@ -85,6 +85,12 @@
                         else {
                             event.returnValue = false;
                         }
+                    }
+
+                    //prevent bubbling
+                    event.cancelBubble = true;
+                    if (typeof event.stopPropagation === "function") {
+                        event.stopPropagation();
                     }
                 }
             }

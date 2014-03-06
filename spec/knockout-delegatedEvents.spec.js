@@ -162,7 +162,7 @@ describe("knockout-delegatedEvents", function(){
                     expect(vm.item).toEqual(vm);
                 });
 
-                it("should find an execute a method when configured as options object", function() {
+                it("should find and execute a method when configured as options object", function() {
                     var vm = {},
                         owner = {};
 
@@ -339,6 +339,53 @@ describe("knockout-delegatedEvents", function(){
                     ko.utils.triggerEvent(parent, "click");
 
                     expect(vm.called).toBeUndefined();
+                });
+            });
+
+            describe("when event has been handled", function() {
+                it("should prevent bubbling", function() {
+                    var vm = {
+                        myAction: defaultAction,
+                        bubbled: false
+                    };
+
+                    root.setAttribute("data-bind", "");
+                    parent.setAttribute("data-bind", "delegatedHandler: ['click']");
+                    child.setAttribute("data-click", "myAction");
+
+                    ko.utils.registerEventHandler(root, "click", function() {
+                        console.log("bubbled");
+                        vm.bubbled = true;
+                    });
+
+                    ko.applyBindings(vm, root);
+                    ko.utils.triggerEvent(child, "click");
+
+                    expect(vm.called).toBeTruthy();
+                    expect(vm.bubbled).toBeFalsy();
+                });
+            });
+
+            describe("when event is not handled", function() {
+                it("should not prevent bubbling", function() {
+                    var vm = {
+                        myAction: defaultAction,
+                        bubbled: false
+                    };
+
+                    root.setAttribute("data-bind", "");
+                    parent.setAttribute("data-bind", "delegatedHandler: ['click']");
+                    child.setAttribute("data-click", "badAction");
+
+                    ko.utils.registerEventHandler(root, "click", function() {
+                        vm.bubbled = true;
+                    });
+
+                    ko.applyBindings(vm, root);
+                    ko.utils.triggerEvent(child, "click");
+
+                    expect(vm.called).toBeFalsy();
+                    expect(vm.bubbled).toBeTruthy();
                 });
             });
         });
