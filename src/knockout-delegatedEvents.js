@@ -20,7 +20,7 @@
 
             //loop until we either find an action, run out of elements, or hit the root element that has our delegated handler
             while (!method && el) {
-                method = el.getAttribute(attr) || ko.utils.domData.get(el, key);
+                method = el.nodeType === 1 && (el.getAttribute(attr) || ko.utils.domData.get(el, key));
                 if (!method) {
                     el = el !== root ? el.parentNode : null;
                 }

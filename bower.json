@@ -1,6 +1,6 @@
 {
     "name": "knockout-delegatedEvents",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "main": "build/knockout-delegatedEvents.min.js",
     "ignore": [
         "examples",
