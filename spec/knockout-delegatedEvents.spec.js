@@ -279,6 +279,41 @@ describe("knockout-delegatedEvents", function(){
                 });
             });
 
+            describe("when dealing with disabled elements", function() {
+                var vm;
+
+                beforeEach(function() {
+                    vm = {
+                        myAction: defaultAction
+                    };
+
+                    ko.applyBindings(vm, root);
+                });
+
+                it("should not execute method when element itself is disabled", function() {
+                    parent.disabled = true;
+                    ko.utils.triggerEvent(parent, "click");
+
+                    expect(vm.called).toBeFalsy();
+                });
+
+                it("should not execute method when element's parent is disabled", function() {
+                    parent.disabled = true;
+                    ko.utils.triggerEvent(child, "click");
+
+                    expect(vm.called).toBeFalsy();
+                });
+
+                it("should not execute when child has handler specified and parent is disabled", function() {
+                    child.setAttribute("data-click", "myAction");
+                    parent.disabled = true;
+
+                    ko.utils.triggerEvent(child, "click");
+
+                    expect(vm.called).toBeFalsy();
+                });
+            });
+
             describe("when event is \"submit\"", function () {
                 it("should call the handler with arguments that match how KO handles submit", function () {
                     var context,
