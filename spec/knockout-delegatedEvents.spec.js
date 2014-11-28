@@ -423,6 +423,28 @@ describe("knockout-delegatedEvents", function(){
                     expect(vm.bubbled).toBeTruthy();
                 });
             });
+
+            describe("when event has bubbling explicitly enabled", function() {
+                it("should allow bubbling even when event is handled", function() {
+                    var vm = {
+                        myAction: defaultAction,
+                        bubbled: false
+                    };
+
+                    root.setAttribute("data-bind", "");
+                    parent.setAttribute("data-bind", "delegatedHandler: ['click'], delegatedClickBubble: true");
+                    child.setAttribute("data-click", "myAction");
+
+                    ko.utils.registerEventHandler(root, "click", function() {
+                        vm.bubbled = true;
+                    });
+
+                    ko.applyBindings(vm, root);
+                    ko.utils.triggerEvent(child, "click");
+
+                    expect(vm.bubbled).toBeTruthy();
+                });
+            });
         });
     });
 });
