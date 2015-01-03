@@ -1,4 +1,4 @@
-// knockout-delegatedEvents 0.4.0 | (c) 2014 Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license
+// knockout-delegatedEvents 0.5.0 | (c) 2015 Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license
 ;(function(factory) {
     //CommonJS
     if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
@@ -98,8 +98,9 @@
                     }
 
                     //prevent bubbling if not enabled
-                    if(bubble !== true) {
+                    if (bubble !== true) {
                         event.cancelBubble = true;
+
                         if (typeof event.stopPropagation === "function") {
                             event.stopPropagation();
                         }
@@ -146,7 +147,7 @@
 
             ko.utils.arrayForEach(events, function(event) {
                 //check if the associated "delegated<EventName>Bubble" is true (optionally allows bubbling)
-                var bubble = allBindings.get( createBindingName(event + 'Bubble') ) === true;
+                var bubble = allBindings.get(createBindingName(event + "Bubble")) === true;
 
                 createDelegatedBinding(event);
                 ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble));

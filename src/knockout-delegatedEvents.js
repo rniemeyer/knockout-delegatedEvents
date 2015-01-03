@@ -97,8 +97,9 @@
                     }
 
                     //prevent bubbling if not enabled
-                    if(bubble !== true) {
+                    if (bubble !== true) {
                         event.cancelBubble = true;
+
                         if (typeof event.stopPropagation === "function") {
                             event.stopPropagation();
                         }
@@ -145,7 +146,7 @@
 
             ko.utils.arrayForEach(events, function(event) {
                 //check if the associated "delegated<EventName>Bubble" is true (optionally allows bubbling)
-                var bubble = allBindings.get( createBindingName(event + 'Bubble') ) === true;
+                var bubble = allBindings.get(createBindingName(event + "Bubble")) === true;
 
                 createDelegatedBinding(event);
                 ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble));

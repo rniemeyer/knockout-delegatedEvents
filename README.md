@@ -105,6 +105,17 @@ There are a couple of cases where this technique might be necessary:
 
 Note: when attaching a handler using the binding, you will need to manage the value of `this` as you would when using the normal `click` and `event` bindings.  So, in this case you would have to take care of it in our view model or bind against it like `$parent.removeItem.bind($parent)`.
 
+##Control Bubbling
+Normally, when an event is handled, the plugin will prevent further bubbling of the event. In a scenario that you do want an event to continue bubbling, you can add an additional binding per event name to allow bubbling.
+
+```html
+<div data-bind="delegatedHandler: ['click', 'mouseover'], delegatedClickBubble: true">
+...
+</div>
+```
+
+In this caase, the `delegatedClickBubble` additional binding will signal the plugin that when it handles a `click` event it should allow the event to continue bubbling. For even greater control, the handler could then access the event argument (2nd arg) and choose to prevent bubbling on a case-by-case basis.
+
 ##TODO
 
 * Improve example
