@@ -10,22 +10,72 @@
         factory(ko, ko.actions = {});
     }
 }(function(ko, actions) {
-    var prefix = "ko_delegated_";
-    var createDelegatedHandler = function(eventName, root, bubble) {
-        return function(event) {
-            var data, method, context, action, owner, matchingParent, command, result,
-                el = event.target || event.srcElement,
-                attr = "data-" + eventName,
-                key = prefix + eventName;
+    var prefix = "ko_delegated_", prefixParent = "ko_delegated_parent_";
 
-            //loop until we either find an action, run out of elements, or hit the root element that has our delegated handler
-            while (!method && el) {
-                method = el.nodeType === 1 && !el.disabled && (el.getAttribute(attr) || ko.utils.domData.get(el, key));
+    function findRoot(callback){
+        return  function (originalElement, root, eventName){
+            var attr = "data-" + eventName+'-parent';
 
-                if (!method) {
-                    el = el !== root ? el.parentNode : null;
-                }
+            while (originalElement && originalElement.nodeType === 1 && !originalElement.disabled && !originalElement.hasAttribute(attr) ) { 
+                originalElement = originalElement !== root ? originalElement.parentNode : null;
             }
+
+            if (!originalElement){
+                return;
+            }
+
+            var dataroot = ko.dataFor(root), clue = originalElement.getAttribute(attr),
+                method = clue==='true'? callback : callback[clue];
+
+            if (!!method &&  (typeof method === "function")){
+                 return {method:method, element:originalElement, owner:dataroot};
+            }
+        };
+    }
+
+    function methodFinder(originalElement, root, eventName){
+        var method, attr = "data-" + eventName, key = prefix + eventName, keyParent = prefixParent+ eventName,
+            attrParent = "data-" + eventName+'-parent', owner, parentAttribute, contextelement;
+
+        while (!method && originalElement) {
+            if (originalElement.nodeType === 1 && !originalElement.disabled){
+                if (parentAttribute){
+                    method = ko.utils.domData.get(originalElement, keyParent);
+                    if (method){
+                        method = parentAttribute==='true'? method : method[parentAttribute];
+                        owner = ko.dataFor(originalElement);
+                    }
+                }
+                else{
+                    method = (originalElement.getAttribute(attr) || ko.utils.domData.get(originalElement, key));
+                    if (!method){
+                        parentAttribute =originalElement.getAttribute(attrParent);
+                        if (!!parentAttribute) contextelement = originalElement;
+                    }
+                }    
+            }         
+
+            if (!method) {
+                originalElement = originalElement !== root ? originalElement.parentNode : null;
+            }
+        }
+
+        if (method){
+            return {method:method, element: contextelement || originalElement, owner:owner};
+        }
+    }
+
+
+    var createDelegatedHandler = function(eventName, root, bubble, methodFinderCallBack) {
+        return function(event) {
+
+            var res = methodFinderCallBack(event.target || event.srcElement,root,eventName);
+
+            if (!res)
+                return;
+
+            var data, context, action, matchingParent, command, result, 
+                el = res.element, method = res.method, owner =res.owner;
 
             if (method) {
                 //get context of the element that actually held the action
@@ -71,7 +121,7 @@
                     //a binding handler was used to associate the element with a function
                     else if (typeof method === "function") {
                         action = method;
-                        owner = data;
+                        owner = owner || data;
                     }
                 }
 
@@ -110,32 +160,32 @@
     };
 
     //create binding handler name from event name
-    var createBindingName = function(eventName) {
-        return "delegated" + eventName.substr(0, 1).toUpperCase() + eventName.slice(1);
+    var createBindingName = function(bindingprefix,eventName) {
+        return bindingprefix + eventName.substr(0, 1).toUpperCase() + eventName.slice(1);
     };
 
-    //create a binding for an event to associate a function with the element
-    var createDelegatedBinding = function(event) {
-        var bindingName;
-        if (!event) {
-            return;
-        }
-
-        //get binding name
-        bindingName = createBindingName(event);
-
-        //create the binding, if it does not exist
+    var createBinding = function (bindingName,attributeName){
         if (!ko.bindingHandlers[bindingName]) {
             ko.bindingHandlers[bindingName] = {
                 init: function(element, valueAccessor) {
                     var action = valueAccessor();
-                    ko.utils.domData.set(element, prefix + event, action);
+                    ko.utils.domData.set(element, attributeName, action);
                 }
             };
         }
     };
 
-    //add a handler on a parent element that responds to events from the children
+    //create a binding for an event to associate a function with the element
+    var createDelegatedBinding = function(event) {
+        if (!event) {
+            return;
+        }
+
+        createBinding(createBindingName("delegated",event),prefix + event);
+        createBinding(createBindingName("delegatedParent",event),prefixParent + event);
+    };
+
+     //add a handler on a parent element that responds to events from the children
     ko.bindingHandlers.delegatedHandler = {
         init: function(element, valueAccessor, allBindings) {
             var events = ko.utils.unwrapObservable(valueAccessor()) || [];
@@ -146,10 +196,23 @@
 
             ko.utils.arrayForEach(events, function(event) {
                 //check if the associated "delegated<EventName>Bubble" is true (optionally allows bubbling)
-                var bubble = allBindings.get(createBindingName(event + "Bubble")) === true;
+                var bubble = allBindings.get(createBindingName("delegated",event + "Bubble")) === true;
 
                 createDelegatedBinding(event);
-                ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble));
+                ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble, methodFinder));
+            });
+        }
+    };
+
+    ko.bindingHandlers.delegatedParentHandler = {
+        init: function(element, valueAccessor, allBindings) {
+            var events = ko.utils.unwrapObservable(valueAccessor());
+
+            ko.utils.objectForEach (events,function(event) {
+                //check if the associated "delegated<EventName>Bubble" is true (optionally allows bubbling)
+                var bubble = allBindings.get(createBindingName("delegated",event + "Bubble")) === true;
+
+                ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble, findRoot(events[event])));
             });
         }
     };
