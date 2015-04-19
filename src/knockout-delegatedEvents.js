@@ -11,21 +11,36 @@
     }
 }(function(ko, actions) {
     var prefix = "ko_delegated_";
-    var createDelegatedHandler = function(eventName, root, bubble) {
-        return function(event) {
-            var data, method, context, action, owner, matchingParent, command, result,
-                el = event.target || event.srcElement,
-                attr = "data-" + eventName,
-                key = prefix + eventName;
 
-            //loop until we either find an action, run out of elements, or hit the root element that has our delegated handler
-            while (!method && el) {
-                method = el.nodeType === 1 && !el.disabled && (el.getAttribute(attr) || ko.utils.domData.get(el, key));
+    function methodFinder(originalElement, root, eventName){
+        var method, attr = "data-" + eventName, key = prefix + eventName;
 
-                if (!method) {
-                    el = el !== root ? el.parentNode : null;
-                }
+        while (!method && originalElement) {
+            method = originalElement.nodeType === 1 && !originalElement.disabled &&  (originalElement.getAttribute(attr) || ko.utils.domData.get(originalElement, key));
+
+            if (!method) {
+                originalElement = originalElement !== root ? originalElement.parentNode : null;
             }
+        }
+
+        if (method){
+            return {method:method, element:originalElement};
+        }
+    }
+
+
+    var createDelegatedHandler = function(eventName, root, bubble, methodFinderCallBack) {
+        return function(event) {
+            var data, context, action, owner, matchingParent, command, result,
+                el = event.target || event.srcElement;
+
+            var res = methodFinderCallBack(el,root,eventName);
+
+            if (!res)
+                return;
+
+            el = res.element;
+            var method = res.method;
 
             if (method) {
                 //get context of the element that actually held the action
@@ -149,7 +164,7 @@
                 var bubble = allBindings.get(createBindingName(event + "Bubble")) === true;
 
                 createDelegatedBinding(event);
-                ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble));
+                ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble, methodFinder));
             });
         }
     };
