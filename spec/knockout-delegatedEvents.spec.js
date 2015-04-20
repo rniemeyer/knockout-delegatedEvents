@@ -8,6 +8,61 @@ describe("knockout-delegatedEvents", function(){
         expect(ko.actions).toBeDefined();
     });
 
+    describe("handling events when element uses data-eventName on binding delegatedFatherHandler", function() {
+        var root, parent, child;
+
+        beforeEach(function() {
+            root = document.createElement("div");
+            parent = document.createElement("div");
+            child = document.createElement("div");
+
+            root.appendChild(parent);
+            parent.appendChild(child);
+            document.body.appendChild(root);
+
+            parent.setAttribute("data-bind", "delegatedFatherHandler: {click:'selectItem'}, with: child");
+            child.setAttribute("data-click-delegateFather", true);
+        });
+
+        describe("when click on child element", function() {
+            it("should find and execute a method on root", function() {
+                var childvm = {selectItem:defaultAction,called:false};
+                var vm = {selectItem:defaultAction, child:childvm,called:false };
+
+                ko.applyBindings(vm, root);
+                ko.utils.triggerEvent(child, "click");
+
+                expect(vm.called).toBeTruthy();
+                expect(vm.item).toEqual(childvm);
+            });               
+        });
+
+        describe("when click on child element", function() {
+            it("should not throw error when method on root is not found", function() {
+                var childvm = {};
+                var vm = {child:childvm,called:false };
+
+                ko.applyBindings(vm, root);
+                ko.utils.triggerEvent(child, "click");
+
+                expect(vm.called).toEqual(false);
+            });               
+        });
+
+         describe("when click on child element", function() {
+            it("should do nothing is data-click-delegateFather is not set", function() {
+                var childvm = {};
+                var vm = {selectItem:defaultAction,child:childvm,called:false };
+                child.removeAttribute("data-click-delegateFather");
+
+                ko.applyBindings(vm, root);
+                ko.utils.triggerEvent(child, "click");
+
+                expect(vm.called).toEqual(false);
+            });               
+        });
+    });
+
     describe("delegatedHandler binding", function() {
         it("should create the binding", function() {
             expect(ko.bindingHandlers.delegatedHandler).toBeDefined();

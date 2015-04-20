@@ -13,6 +13,28 @@
 }(function(ko, actions) {
     var prefix = "ko_delegated_";
 
+    function findRoot(methodName){
+        return  function (originalElement, root, eventName){
+            var attr = "data-" + eventName+'-delegateFather';
+
+            while (originalElement && !originalElement.hasAttribute(attr) ) { 
+                originalElement = originalElement !== root ? originalElement.parentNode : null;
+            }
+
+            if (!originalElement){
+                return;
+            }
+
+            var dataroot = (ko.dataFor(root)||{}), method = dataroot[methodName];
+
+            if (!method || (typeof method !== "function")){
+                return;
+            }
+
+            return {method:method, element:originalElement, owner:dataroot};
+        };
+    }
+
     function methodFinder(originalElement, root, eventName){
         var method, attr = "data-" + eventName, key = prefix + eventName;
 
@@ -32,16 +54,14 @@
 
     var createDelegatedHandler = function(eventName, root, bubble, methodFinderCallBack) {
         return function(event) {
-            var data, context, action, owner, matchingParent, command, result,
-                el = event.target || event.srcElement;
 
-            var res = methodFinderCallBack(el,root,eventName);
+            var res = methodFinderCallBack(event.target || event.srcElement,root,eventName);
 
             if (!res)
                 return;
 
-            el = res.element;
-            var method = res.method;
+            var data, context, action, matchingParent, command, result, 
+                el = res.element, method = res.method, owner =res.owner;
 
             if (method) {
                 //get context of the element that actually held the action
@@ -87,7 +107,7 @@
                     //a binding handler was used to associate the element with a function
                     else if (typeof method === "function") {
                         action = method;
-                        owner = data;
+                        owner = owner || data;
                     }
                 }
 
@@ -151,7 +171,7 @@
         }
     };
 
-    //add a handler on a parent element that responds to events from the children
+     //add a handler on a parent element that responds to events from the children
     ko.bindingHandlers.delegatedHandler = {
         init: function(element, valueAccessor, allBindings) {
             var events = ko.utils.unwrapObservable(valueAccessor()) || [];
@@ -167,6 +187,21 @@
                 createDelegatedBinding(event);
                 ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble, methodFinder));
             });
+        }
+    };
+
+    ko.bindingHandlers.delegatedFatherHandler = {
+        init: function(element, valueAccessor, allBindings) {
+            var events = ko.utils.unwrapObservable(valueAccessor()) || {};
+
+            for (var event in events) {
+                if (events.hasOwnProperty(event)) {
+                    //check if the associated "delegated<EventName>Bubble" is true (optionally allows bubbling)
+                    var bubble = allBindings.get(createBindingName(event + "Bubble")) === true;
+
+                    ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble, findRoot(events[event])));
+                }
+            }
         }
     };
 }));
