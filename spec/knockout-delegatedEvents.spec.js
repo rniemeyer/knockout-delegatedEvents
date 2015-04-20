@@ -34,10 +34,8 @@ describe("knockout-delegatedEvents", function(){
 
                 expect(vm.called).toBeTruthy();
                 expect(vm.item).toEqual(childvm);
-            });               
-        });
+            });  
 
-        describe("when click on child element", function() {
             it("should not throw error when method on root is not found", function() {
                 var childvm = {};
                 var vm = {child:childvm,called:false };
@@ -46,10 +44,8 @@ describe("knockout-delegatedEvents", function(){
                 ko.utils.triggerEvent(child, "click");
 
                 expect(vm.called).toEqual(false);
-            });               
-        });
+            });   
 
-         describe("when click on child element", function() {
             it("should do nothing is data-click-delegateFather is not set", function() {
                 var childvm = {};
                 var vm = {selectItem:defaultAction,child:childvm,called:false };
@@ -59,8 +55,11 @@ describe("knockout-delegatedEvents", function(){
                 ko.utils.triggerEvent(child, "click");
 
                 expect(vm.called).toEqual(false);
-            });               
+            });  
+
+
         });
+
     });
 
     describe("delegatedHandler binding", function() {

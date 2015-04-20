@@ -193,14 +193,12 @@
         init: function(element, valueAccessor, allBindings) {
             var events = ko.utils.unwrapObservable(valueAccessor()) || {};
 
-            for (var event in events) {
-                if (events.hasOwnProperty(event)) {
+            ko.utils.objectForEach (events,function(event) {
                     //check if the associated "delegated<EventName>Bubble" is true (optionally allows bubbling)
-                    var bubble = allBindings.get(createBindingName(event + "Bubble")) === true;
+                var bubble = allBindings.get(createBindingName(event + "Bubble")) === true;
 
-                    ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble, findRoot(events[event])));
-                }
-            }
+                ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble, findRoot(events[event])));
+            });
         }
     };
 }));
