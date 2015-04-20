@@ -19,15 +19,34 @@ describe("knockout-delegatedEvents", function(){
             root.appendChild(parent);
             parent.appendChild(child);
             document.body.appendChild(root);
-
-            parent.setAttribute("data-bind", "delegatedFatherHandler: {click:'selectItem'}, with: child");
-            child.setAttribute("data-click-delegateFather", true);
         });
 
+        describe("when configured to a string", function() {
+
+            beforeEach(function() {
+                parent.setAttribute("data-bind", "delegatedFatherHandler: {click:'selectItem'}, with: child");
+                child.setAttribute("data-click-delegateFather", true);
+            });
+
+            it("should not throw an exception", function() {
+                var childvm = {called:false}, vm = {selectItem:defaultAction, child:childvm,called:false };
+
+                ko.applyBindings(vm, root);
+                ko.utils.triggerEvent(child, "click");
+
+                expect(vm.called).toEqual(false);
+            }); 
+        }); 
+
         describe("when click on child element", function() {
+
+            beforeEach(function() {
+                parent.setAttribute("data-bind", "delegatedFatherHandler: {click:selectItem}, with: child");
+                child.setAttribute("data-click-delegateFather", true);
+            });
+
             it("should find and execute a method on root", function() {
-                var childvm = {selectItem:defaultAction,called:false};
-                var vm = {selectItem:defaultAction, child:childvm,called:false };
+                var childvm = {selectItem:defaultAction,called:false},vm = {selectItem:defaultAction, child:childvm,called:false };
 
                 ko.applyBindings(vm, root);
                 ko.utils.triggerEvent(child, "click");
@@ -36,14 +55,19 @@ describe("knockout-delegatedEvents", function(){
                 expect(vm.item).toEqual(childvm);
             });  
 
-            it("should not throw error when method on root is not found", function() {
-                var childvm = {};
-                var vm = {child:childvm,called:false };
+            it("should throw exception when method on root is not found", function() {
+                var childvm = {}, exceptionraised, vm = {child:childvm,called:false };
 
-                ko.applyBindings(vm, root);
+                try{
+                    ko.applyBindings(vm, root);
+                }
+                catch(exception){
+                    exceptionraised=exception;
+                }
                 ko.utils.triggerEvent(child, "click");
 
                 expect(vm.called).toEqual(false);
+                expect(exceptionraised).toBeDefined();
             });   
 
             it("should do nothing is data-click-delegateFather is not set", function() {

@@ -13,9 +13,17 @@
 }(function(ko, actions) {
     var prefix = "ko_delegated_";
 
-    function findRoot(methodName){
+    function findRoot(callback){
         return  function (originalElement, root, eventName){
             var attr = "data-" + eventName+'-delegateFather';
+
+            if (!callback){
+                return;
+            }
+
+            // if (!method || (typeof method !== "function")){
+            //     return;
+            // }
 
             while (originalElement && !originalElement.hasAttribute(attr) ) { 
                 originalElement = originalElement !== root ? originalElement.parentNode : null;
@@ -25,13 +33,15 @@
                 return;
             }
 
-            var dataroot = (ko.dataFor(root)||{}), method = dataroot[methodName];
+            var dataroot = ko.dataFor(root), clue = originalElement.getAttribute(attr);
 
-            if (!method || (typeof method !== "function")){
-                return;
+            if (clue==='true' &&  (typeof callback === "function")){
+                return {method:callback, element:originalElement, owner:dataroot};
             }
 
-            return {method:method, element:originalElement, owner:dataroot};
+            //var dataroot = (ko.dataFor(root)||{}), method = dataroot[methodName];
+
+           // return {method:method, element:originalElement, owner:ko.dataFor(root)};
         };
     }
 
