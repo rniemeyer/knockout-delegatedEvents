@@ -9,15 +9,17 @@ describe("knockout-delegatedEvents", function(){
     });
 
     describe("handling events when element uses data-eventName on binding delegatedFatherHandler", function() {
-        var root, parent, child;
+        var root, parent, child, child2;
 
         beforeEach(function() {
             root = document.createElement("div");
             parent = document.createElement("div");
             child = document.createElement("div");
+            child2 = document.createElement("div");
 
             root.appendChild(parent);
             parent.appendChild(child);
+            parent.appendChild(child2);
             document.body.appendChild(root);
         });
 
@@ -53,7 +55,7 @@ describe("knockout-delegatedEvents", function(){
 
                 expect(vm.called).toBeTruthy();
                 expect(vm.item).toEqual(childvm);
-            });  
+            }); 
 
             it("should throw exception when method on root is not found", function() {
                 var childvm = {}, exceptionraised, vm = {child:childvm,called:false };
@@ -83,6 +85,34 @@ describe("knockout-delegatedEvents", function(){
 
 
         });
+
+        describe("when configured to a with key-value", function() {
+
+            beforeEach(function() {
+                parent.setAttribute("data-bind", "delegatedFatherHandler: {click:{select:selectItem}}, with: child");
+                child.setAttribute("data-click-delegateFather", 'select');
+                child2.setAttribute("data-click-delegateFather", 'wrongselect');
+            });
+
+            it("should find correct target", function() {
+                var childvm = {called:false}, vm = {selectItem:defaultAction, child:childvm,called:false };
+
+                ko.applyBindings(vm, root);
+                ko.utils.triggerEvent(child, "click");
+
+                expect(vm.called).toEqual(true);
+                expect(vm.item).toEqual(childvm);
+            }); 
+
+             it("should do nothing on wrong target", function() {
+                var childvm = {called:false}, vm = {selectItem:defaultAction, child:childvm,called:false };
+
+                ko.applyBindings(vm, root);
+                ko.utils.triggerEvent(child2, "click");
+
+                expect(vm.called).toEqual(false);
+            }); 
+        }); 
 
     });
 

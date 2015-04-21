@@ -16,14 +16,6 @@
         return  function (originalElement, root, eventName){
             var attr = "data-" + eventName+'-delegateFather';
 
-            if (!callback){
-                return;
-            }
-
-            // if (!method || (typeof method !== "function")){
-            //     return;
-            // }
-
             while (originalElement && !originalElement.hasAttribute(attr) ) { 
                 originalElement = originalElement !== root ? originalElement.parentNode : null;
             }
@@ -32,15 +24,12 @@
                 return;
             }
 
-            var dataroot = ko.dataFor(root), clue = originalElement.getAttribute(attr);
+            var dataroot = ko.dataFor(root), clue = originalElement.getAttribute(attr),
+                method = clue==='true'? callback : callback[clue];
 
-            if (clue==='true' &&  (typeof callback === "function")){
-                return {method:callback, element:originalElement, owner:dataroot};
+            if (!!method &&  (typeof method === "function")){
+                 return {method:method, element:originalElement, owner:dataroot};
             }
-
-            //var dataroot = (ko.dataFor(root)||{}), method = dataroot[methodName];
-
-           // return {method:method, element:originalElement, owner:ko.dataFor(root)};
         };
     }
 
