@@ -11,23 +11,23 @@
     </style>
 </head>
 <body>
-    <div id="main" data-bind="delegatedHandler: ['mouseover', 'mouseout'], delegatedFatherHandler:{click:addGroup}">
+    <div id="main" data-bind="delegatedHandler: ['mouseover', 'mouseout'], delegatedFather:{click:addGroup}">
         <ul data-bind="foreach: groups">
-            <li data-bind="delegatedFatherHandler: {click:{insert:insertRow,remove:removeItem,add:addItem}}" data-mouseover="showMessage" data-mouseout="clearMessage" >
+            <li data-bind="delegatedFather: {click:{insert:insertRow,remove:removeItem,add:addItem}}" data-mouseover="showMessage" data-mouseout="clearMessage" >
                 <input data-bind="value: name" />
                 <ul data-bind="foreach: items">
                     <li class="item" data-mouseover="showMessage" data-mouseout="clearMessage">
                         <input data-bind="value: name" />
                         <input class="input-mini" data-bind="value: price" />
-                        <a href="#" title="insert row" data-click-delegateFather="insert"><i class="icon-plus"></i></a>
-                        <a href="#" title="remove row" data-click-delegateFather="remove"><i class="icon-trash"></i></a>
+                        <a href="#" title="insert row" data-click-father="insert"><i class="icon-plus"></i></a>
+                        <a href="#" title="remove row" data-click-father="remove"><i class="icon-trash"></i></a>
                     </li>
                 </ul>
-                <a href="#" class="btn-mini" data-click-delegateFather="add">Add Item</a>
+                <a href="#" class="btn-mini" data-click-father="add">Add Item</a>
             </li>
         </ul>
-        <!-- could have just used data-click="addGroup" here, just showing the binding -->
-        <a href="#" class="btn-mini" data-click-delegateFather="true">Add Group</a>
+
+        <a href="#" class="btn-mini" data-click-father="true">Add Group</a>
     </div>
 
     <hr/>

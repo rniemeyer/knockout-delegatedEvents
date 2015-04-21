@@ -15,7 +15,7 @@
 
     function findRoot(callback){
         return  function (originalElement, root, eventName){
-            var attr = "data-" + eventName+'-delegateFather';
+            var attr = "data-" + eventName+'-father';
 
             while (originalElement && !originalElement.hasAttribute(attr) ) { 
                 originalElement = originalElement !== root ? originalElement.parentNode : null;
@@ -189,12 +189,12 @@
         }
     };
 
-    ko.bindingHandlers.delegatedFatherHandler = {
+    ko.bindingHandlers.delegatedFather = {
         init: function(element, valueAccessor, allBindings) {
             var events = ko.utils.unwrapObservable(valueAccessor()) || {};
 
             ko.utils.objectForEach (events,function(event) {
-                    //check if the associated "delegated<EventName>Bubble" is true (optionally allows bubbling)
+                //check if the associated "delegated<EventName>Bubble" is true (optionally allows bubbling)
                 var bubble = allBindings.get(createBindingName(event + "Bubble")) === true;
 
                 ko.utils.registerEventHandler(element, event, createDelegatedHandler(event, element, bubble, findRoot(events[event])));

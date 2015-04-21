@@ -8,7 +8,7 @@ describe("knockout-delegatedEvents", function(){
         expect(ko.actions).toBeDefined();
     });
 
-    describe("handling events when element uses data-eventName on binding delegatedFatherHandler", function() {
+    describe("handling events when element uses data-eventName on binding delegatedFather", function() {
         var root, parent, child, child2;
 
         beforeEach(function() {
@@ -26,8 +26,8 @@ describe("knockout-delegatedEvents", function(){
         describe("when configured to a string", function() {
 
             beforeEach(function() {
-                parent.setAttribute("data-bind", "delegatedFatherHandler: {click:'selectItem'}, with: child");
-                child.setAttribute("data-click-delegateFather", true);
+                parent.setAttribute("data-bind", "delegatedFather: {click:'selectItem'}, with: child");
+                child.setAttribute("data-click-father", true);
             });
 
             it("should not throw an exception", function() {
@@ -43,8 +43,8 @@ describe("knockout-delegatedEvents", function(){
         describe("when click on child element", function() {
 
             beforeEach(function() {
-                parent.setAttribute("data-bind", "delegatedFatherHandler: {click:selectItem}, with: child");
-                child.setAttribute("data-click-delegateFather", true);
+                parent.setAttribute("data-bind", "delegatedFather: {click:selectItem}, with: child");
+                child.setAttribute("data-click-father", true);
             });
 
             it("should find and execute a method on root", function() {
@@ -72,10 +72,10 @@ describe("knockout-delegatedEvents", function(){
                 expect(exceptionraised).toBeDefined();
             });   
 
-            it("should do nothing is data-click-delegateFather is not set", function() {
+            it("should do nothing is data-click-father is not set", function() {
                 var childvm = {};
                 var vm = {selectItem:defaultAction,child:childvm,called:false };
-                child.removeAttribute("data-click-delegateFather");
+                child.removeAttribute("data-click-father");
 
                 ko.applyBindings(vm, root);
                 ko.utils.triggerEvent(child, "click");
@@ -89,9 +89,9 @@ describe("knockout-delegatedEvents", function(){
         describe("when configured to a with key-value", function() {
 
             beforeEach(function() {
-                parent.setAttribute("data-bind", "delegatedFatherHandler: {click:{select:selectItem}}, with: child");
-                child.setAttribute("data-click-delegateFather", 'select');
-                child2.setAttribute("data-click-delegateFather", 'wrongselect');
+                parent.setAttribute("data-bind", "delegatedFather: {click:{select:selectItem}}, with: child");
+                child.setAttribute("data-click-father", 'select');
+                child2.setAttribute("data-click-father", 'wrongselect');
             });
 
             it("should find correct target", function() {
