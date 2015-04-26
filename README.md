@@ -107,7 +107,8 @@ Note: when attaching a handler using the binding, you will need to manage the va
 
 ###4 - Specify a function reference in `delegatedFatherTheEventName` binding and use `data-TheEventName-father` attribute
 
-The final option for specifying a handler is to place a normal binding on the father element that stores a reference to the function with the element (but does not attach an event handler). Bindings for each event will be dynamically created, as necessary, by the `delegatedHandler` binding. A `data-TheEventName-father` attribute should be added to the element that should respond to the event. It is possible to handle mutiple elements using object literal as `delegatedFatherTheEventName` binding where keys should be used in `data-TheEventName-father` attribute and values should be the function to execute. If only one function is handled `data-TheEventName-father` value should be true and `delegatedFatherClick` should be the function to execute.
+The final option for specifying a handler is to place a normal binding on the father element that stores a reference to the function with the element (but does not attach an event handler). A `data-TheEventName-father` attribute should be added to the element that should respond to the event. Exactly as for `delegateTheEventName`, bindings for each event will be dynamically created, as necessary, by the `delegatedHandler` binding.
+It is possible to handle mutiple child elements in a single father element using object literal as `delegatedFatherTheEventName` binding where keys should be used as `data-TheEventName-father` attribute values and values should be the handler. Otherwise the `data-TheEventName-father` value should be set to true and `delegatedFatherClick` value should be the handler.
 
 For example, you can use the `delegatedFatherClick` binding to associate the element with a specific function.
 
@@ -131,9 +132,9 @@ Here is an example how you can use the `delegatedFatherClick` binding to associa
     </li>
 </ul>
 ``` 
-When the element with the `delegatedFatherTheEventName` biningd and the element that should register the event listener are the same, it is possible to use `delegatedFatherHandler` binding to simplify notation. This binding should receive a value of: {EventName:function,....} or {EventName:{KeyOne:functionOne, KeyTwo:FunctionTwo...},...}.
+When the element with the `delegatedFatherTheEventName` binding and the element that should attach the event handler are the same, it is possible to use `delegatedFatherHandler` binding instead to simplify notation. This binding receive a value of: {EventName:function,....} associated with `data-click-father` set to true on child element or {EventName:{KeyOne:functionOne, KeyTwo:FunctionTwo...},...} associated with `data-click-father` set to KeyOne and KeyTwo on child elements.
 
-For example, you can re-write preceding example using `delegatedFatherHandler`:
+For example, you can re-write preceding example using `delegatedFatherHandler` like this:
 
 ```html
 <ul data-bind="foreach: items, delegatedFatherHandler:{click:{remove:removeItem,add:AddItem}}">
@@ -144,6 +145,8 @@ For example, you can re-write preceding example using `delegatedFatherHandler`:
     </li>
 </ul>
 ``` 
+
+This technique gives you the power of solution 3 and at the same time you will pay the overhead of parsing and executing a binding only on father element and not on all child elements.
 
 ##Control Bubbling
 Normally, when an event is handled, the plugin will prevent further bubbling of the event. In a scenario that you do want an event to continue bubbling, you can add an additional binding per event name to allow bubbling.
