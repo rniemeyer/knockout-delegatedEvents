@@ -85,7 +85,7 @@ Note: if an `owner` is not specified, then the value of `this` will be the curre
 
 ###3 - Specify a function reference in `delegatedTheEventName` binding
 
-The final option for specifying a handler is to place a normal binding on the child element that stores a reference to the function with the element (but does not attach an event handler). Bindings for each event will be dynamically created, as necessary, by the `delegatedHandler` binding.
+This option for specifying a handler is to place a normal binding on the child element that stores a reference to the function with the element (but does not attach an event handler). Bindings for each event will be dynamically created, as necessary, by the `delegatedHandler` binding.
 
 For example, you can use the `delegatedClick` binding to associate the element with a specific function.
 
@@ -104,6 +104,49 @@ There are a couple of cases where this technique might be necessary:
 * you do not want to use `ko.actions` and have clashing method names or want to use a function that is outside of your view model.
 
 Note: when attaching a handler using the binding, you will need to manage the value of `this` as you would when using the normal `click` and `event` bindings.  So, in this case you would have to take care of it in our view model or bind against it like `$parent.removeItem.bind($parent)`.
+
+###4 - Specify a function reference in `delegatedParentTheEventName` binding and use `data-TheEventName-parent` attribute
+
+The final option for specifying a handler is to place a normal binding on the parent element that stores a reference to the function with the element (but does not attach an event handler). A `data-TheEventName-parent` attribute should be added to the element that should respond to the event. Exactly as for `delegateTheEventName`, bindings for each event will be dynamically created, as necessary, by the `delegatedHandler` binding.
+It is possible to handle mutiple child elements in a single parent element using object literal as `delegatedParentTheEventName` binding where keys should be used as `data-TheEventName-parent` attribute values and values should be the handler. Otherwise the `data-TheEventName-parent` value should be set to true and `delegatedParentClick` value should be the handler.
+
+For example, you can use the `delegatedParentClick` binding to associate the element with a specific function.
+
+```html
+<ul data-bind="delegatedHandler: 'click', foreach: items, delegatedParentClick:removeItem">
+    <li>
+        <span data-bind="text: name"></span>
+        <a href="#" data-click-parent="true">x</a>
+    </li>
+</ul>
+``` 
+
+Here is an example how you can use the `delegatedParentClick` binding to associate multiple elements with diferent functions.
+
+```html
+<ul data-bind="delegatedHandler: 'click', foreach: items, delegatedParentClick:{remove:removeItem,add:AddItem}">
+    <li>
+        <span data-bind="text: name"></span>
+        <a href="#" data-click-parent="remove">x</a>
+        <a href="#" data-click-parent="add">+/a>
+    </li>
+</ul>
+``` 
+When the element with the `delegatedParentTheEventName` binding and the element that should attach the event handler are the same, it is possible to use `delegatedParentHandler` binding instead to simplify notation. This binding receive a value of: {EventName:function,....} associated with `data-click-parent` set to true on child element or {EventName:{KeyOne:functionOne, KeyTwo:FunctionTwo...},...} associated with `data-click-parent` set to KeyOne and KeyTwo on child elements.
+
+For example, you can re-write preceding example using `delegatedParentHandler` like this:
+
+```html
+<ul data-bind="foreach: items, delegatedParentHandler:{click:{remove:removeItem,add:AddItem}}">
+    <li>
+        <span data-bind="text: name"></span>
+        <a href="#" data-click-parent="remove">x</a>
+        <a href="#" data-click-parent="add">+/a>
+    </li>
+</ul>
+``` 
+
+This technique gives you the power of solution 3 and at the same time you will pay the overhead of parsing and executing a binding only on parent element and not on all child elements.
 
 ##Control Bubbling
 Normally, when an event is handled, the plugin will prevent further bubbling of the event. In a scenario that you do want an event to continue bubbling, you can add an additional binding per event name to allow bubbling.
