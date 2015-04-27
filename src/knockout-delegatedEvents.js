@@ -10,11 +10,11 @@
         factory(ko, ko.actions = {});
     }
 }(function(ko, actions) {
-    var prefix = "ko_delegated_", prefixFather = "ko_delegated_father_";
+    var prefix = "ko_delegated_", prefixParent = "ko_delegated_parent_";
 
     function findRoot(callback){
         return  function (originalElement, root, eventName){
-            var attr = "data-" + eventName+'-father';
+            var attr = "data-" + eventName+'-parent';
 
             while (originalElement && originalElement.nodeType === 1 && !originalElement.disabled && !originalElement.hasAttribute(attr) ) { 
                 originalElement = originalElement !== root ? originalElement.parentNode : null;
@@ -34,23 +34,23 @@
     }
 
     function methodFinder(originalElement, root, eventName){
-        var method, attr = "data-" + eventName, key = prefix + eventName, keyFather = prefixFather+ eventName,
-            attrfather = "data-" + eventName+'-father', owner, fatherattribute, contextelement;
+        var method, attr = "data-" + eventName, key = prefix + eventName, keyParent = prefixParent+ eventName,
+            attrParent = "data-" + eventName+'-parent', owner, parentAttribute, contextelement;
 
         while (!method && originalElement) {
             if (originalElement.nodeType === 1 && !originalElement.disabled){
-                if (fatherattribute){
-                    method = ko.utils.domData.get(originalElement, keyFather);
+                if (parentAttribute){
+                    method = ko.utils.domData.get(originalElement, keyParent);
                     if (method){
-                        method = fatherattribute==='true'? method : method[fatherattribute];
+                        method = parentAttribute==='true'? method : method[parentAttribute];
                         owner = ko.dataFor(originalElement);
                     }
                 }
                 else{
                     method = (originalElement.getAttribute(attr) || ko.utils.domData.get(originalElement, key));
                     if (!method){
-                        fatherattribute =originalElement.getAttribute(attrfather);
-                        if (!!fatherattribute) contextelement = originalElement;
+                        parentAttribute =originalElement.getAttribute(attrParent);
+                        if (!!parentAttribute) contextelement = originalElement;
                     }
                 }    
             }         
@@ -182,7 +182,7 @@
         }
 
         createBinding(createBindingName("delegated",event),prefix + event);
-        createBinding(createBindingName("delegatedFather",event),prefixFather + event);
+        createBinding(createBindingName("delegatedParent",event),prefixParent + event);
     };
 
      //add a handler on a parent element that responds to events from the children
@@ -204,7 +204,7 @@
         }
     };
 
-    ko.bindingHandlers.delegatedFatherHandler = {
+    ko.bindingHandlers.delegatedParentHandler = {
         init: function(element, valueAccessor, allBindings) {
             var events = ko.utils.unwrapObservable(valueAccessor());
 
