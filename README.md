@@ -127,8 +127,8 @@ Here is an example how you can use the `delegatedFatherClick` binding to associa
 <ul data-bind="delegatedHandler: 'click', foreach: items, delegatedFatherClick:{remove:removeItem,add:AddItem}">
     <li>
         <span data-bind="text: name"></span>
-        <a href="#" data-click-father="removeItem">x</a>
-        <a href="#" data-click-father="AddItem">+/a>
+        <a href="#" data-click-father="remove">x</a>
+        <a href="#" data-click-father="add">+/a>
     </li>
 </ul>
 ``` 
@@ -140,8 +140,8 @@ For example, you can re-write preceding example using `delegatedFatherHandler` l
 <ul data-bind="foreach: items, delegatedFatherHandler:{click:{remove:removeItem,add:AddItem}}">
     <li>
         <span data-bind="text: name"></span>
-        <a href="#" data-click-father="removeItem">x</a>
-        <a href="#" data-click-father="AddItem">+/a>
+        <a href="#" data-click-father="remove">x</a>
+        <a href="#" data-click-father="add">+/a>
     </li>
 </ul>
 ``` 
