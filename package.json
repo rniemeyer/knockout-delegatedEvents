@@ -1,6 +1,14 @@
 {
-  "name": "knockout-delegatedEvents",
+  "name": "knockout-delegated-events",
   "version": "0.6.0",
+  "description": "A simple and flexible plugin to do declarative event delegation in Knockout.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rniemeyer/knockout-delegatedEvents.git"
+  },
+  "main": "dist/knockout-delegatedEvents.min.js",
+  "author": "Ryan Niemeyer <rniemeyer@gmail.com> (http://knockmeout.net)",
+  "license": "MIT",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-uglify": "0.x.x",
