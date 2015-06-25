@@ -121,10 +121,10 @@ For example, you can use the `delegatedParentClick` binding to associate the ele
 </ul>
 ``` 
 
-Here is an example how you can use the `delegatedParentClick` binding to associate multiple elements with diferent functions.
+Here is an example how you can use the `delegatedParentClick` binding to associate multiple elements with different functions.
 
 ```html
-<ul data-bind="delegatedHandler: 'click', foreach: items, delegatedParentClick:{remove:removeItem,add:AddItem}">
+<ul data-bind="delegatedHandler: 'click', foreach: items, delegatedParentClick:{ remove: removeItem, add: addItem}">
     <li>
         <span data-bind="text: name"></span>
         <a href="#" data-click-parent="remove">x</a>
@@ -132,12 +132,12 @@ Here is an example how you can use the `delegatedParentClick` binding to associa
     </li>
 </ul>
 ``` 
-When the element with the `delegatedParentTheEventName` binding and the element that should attach the event handler are the same, it is possible to use `delegatedParentHandler` binding instead to simplify notation. This binding receive a value of: {EventName:function,....} associated with `data-click-parent` set to true on child element or {EventName:{KeyOne:functionOne, KeyTwo:FunctionTwo...},...} associated with `data-click-parent` set to KeyOne and KeyTwo on child elements.
+When the element with the `delegatedParentTheEventName` binding and the element that should attach the event handler are the same, it is possible to use `delegatedParentHandler` binding instead to simplify notation. This binding receive a value of: { EventName: function,....} associated with `data-click-parent` set to true on child element or { EventName: { KeyOne: functionOne, KeyTwo: functionTwo...}, ...} associated with `data-click-parent` set to KeyOne and KeyTwo on child elements.
 
 For example, you can re-write preceding example using `delegatedParentHandler` like this:
 
 ```html
-<ul data-bind="foreach: items, delegatedParentHandler:{click:{remove:removeItem,add:AddItem}}">
+<ul data-bind="foreach: items, delegatedParentHandler:{ click :{ remove: removeItem, add: addItem }} ">
     <li>
         <span data-bind="text: name"></span>
         <a href="#" data-click-parent="remove">x</a>
@@ -157,7 +157,7 @@ Normally, when an event is handled, the plugin will prevent further bubbling of 
 </div>
 ```
 
-In this caase, the `delegatedClickBubble` additional binding will signal the plugin that when it handles a `click` event it should allow the event to continue bubbling. For even greater control, the handler could then access the event argument (2nd arg) and choose to prevent bubbling on a case-by-case basis.
+In this case, the `delegatedClickBubble` additional binding will signal the plugin that when it handles a `click` event it should allow the event to continue bubbling. For even greater control, the handler could then access the event argument (2nd arg) and choose to prevent bubbling on a case-by-case basis.
 
 ##TODO
 

@@ -11,9 +11,9 @@
     </style>
 </head>
 <body>
-    <div id="main" data-bind="delegatedHandler: ['click','mouseover', 'mouseout',], delegatedParentHandler:{click:addGroup}">
+    <div id="main" data-bind="delegatedHandler: ['click', 'mouseover', 'mouseout',], delegatedParentHandler: { click: addGroup }">
         <ul data-bind="foreach: groups">
-            <li data-bind="delegatedParentClick: {insert:insertRow,remove:removeItem,add:addItem}" data-mouseover="showMessage" data-mouseout="clearMessage" >
+            <li data-bind="delegatedParentClick: { insert: insertRow, remove: removeItem, add: addItem }" data-mouseover="showMessage" data-mouseout="clearMessage" >
                 <input data-bind="value: name" />
                 <ul data-bind="foreach: items">
                     <li class="item" data-mouseover="showMessage" data-mouseout="clearMessage">
