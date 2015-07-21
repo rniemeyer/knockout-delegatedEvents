@@ -7,21 +7,21 @@ module.exports = function(grunt) {
             options: {
                 separator: '\n\n',
                 stripBanners: true,
-                banner: '// <%= pkg.name %> <%= pkg.version %> | (c) <%= grunt.template.today("yyyy") %> Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license\n'
+                banner: '// knockout-delegatedEvents <%= pkg.version %> | (c) <%= grunt.template.today("yyyy") %> Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license\n'
             },
             dist: {
                 src: "src/*.js",
-                dest: 'build/<%= pkg.name %>.js'
+                dest: 'build/knockout-delegatedEvents.js'
             }
         },
         uglify: {
             options: {
                 stripBanners: true,
-                banner: '// <%= pkg.name %> <%= pkg.version %> | (c) <%= grunt.template.today("yyyy") %> Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license\n'
+                banner: '// knockout-delegatedEvents <%= pkg.version %> | (c) <%= grunt.template.today("yyyy") %> Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license\n'
             },
             build: {
-                src: 'build/<%= pkg.name %>.js',
-                dest: 'build/<%= pkg.name %>.min.js'
+                src: 'build/knockout-delegatedEvents.js',
+                dest: 'build/knockout-delegatedEvents.min.js'
             }
         },
         jshint: {

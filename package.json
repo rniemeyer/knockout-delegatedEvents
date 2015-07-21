@@ -1,6 +1,6 @@
 {
   "name": "knockout-delegated-events",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "A simple and flexible plugin to do declarative event delegation in Knockout.js",
   "repository": {
     "type": "git",
