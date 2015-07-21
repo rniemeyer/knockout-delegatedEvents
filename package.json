@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git://github.com/rniemeyer/knockout-delegatedEvents.git"
   },
-  "main": "dist/knockout-delegatedEvents.min.js",
+  "main": "build/knockout-delegatedEvents.min.js",
   "author": "Ryan Niemeyer <rniemeyer@gmail.com> (http://knockmeout.net)",
   "license": "MIT",
   "devDependencies": {
